@@ -41,7 +41,7 @@ virtualenv—which you should—make sure your python script directory is on you
 To see ``har2case`` version: ::
 
     $ har2case -V
-    0.0.1
+    0.0.3
 
 To see available options, run: ::
 
@@ -67,10 +67,10 @@ examples
 
 In most cases, you can run ``har2case`` like this: ::
 
-    $ har2case demo.har demo.yml
+    $ har2case tests/data/demo.har demo.yml
     INFO:root:Generate YAML testset successfully: demo.yml
 
-    $ har2case demo.har demo.json
+    $ har2case tests/data/demo.har demo.json
     INFO:root:Generate JSON testset successfully: demo.json
 
 As you see, the first parameter is HAR source file path, and the second is converted YAML/JSON file path.
@@ -79,8 +79,78 @@ The output testset file type is detemined by the suffix of your specified file.
 
 If you only specify HAR source file path, the output testset is in JSON format by default and located in the same folder with source file. ::
 
-    $ har2case ~/Users/httprunner/demo.har
-    INFO:root:Generate JSON testset successfully: ~/Users/httprunner/demo.json
+    $ har2case tests/data/demo.har
+    INFO:root:Generate JSON testset successfully: tests/data/demo.json
+
+Generated YAML testset ``demo.yml`` shows like below:
+
+.. code-block:: yaml
+
+    -   config:
+            headers:
+                User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36
+                    (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36
+            name: testset description
+            variables: []
+    -   test:
+            name: /api/v1/Account/Login
+            request:
+                headers:
+                    Content-Type: application/json
+                json:
+                    Pwd: '123'
+                    UserName: test001
+                    VerCode: ''
+                method: POST
+                url: https://httprunner.top/api/v1/Account/Login
+            validate:
+            -   check: status_code
+                expect: 200
+            -   check: IsSuccess
+                expect: true
+            -   check: Code
+                expect: 200
+            -   check: Message
+                expect: null
+
+And generated JSON testset ``demo.json`` shows like this:
+
+.. code-block:: json
+
+    [
+        {
+            "config": {
+                "name": "testset description",
+                "variables": [],
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
+                }
+            }
+        },
+        {
+            "test": {
+                "name": "/api/v1/Account/Login",
+                "request": {
+                    "method": "POST",
+                    "url": "https://httprunner.top/api/v1/Account/Login",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "json": {
+                        "UserName": "test001",
+                        "Pwd": "123",
+                        "VerCode": ""
+                    }
+                },
+                "validate": [
+                    {"check": "status_code", "expect": 200},
+                    {"check": "IsSuccess", "expect": true},
+                    {"check": "Code", "expect": 200},
+                    {"check": "Message", "expect": null}
+                ]
+            }
+        }
+    ]
 
 
 .. _PyPI: https://pypi.python.org/pypi
