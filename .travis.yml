@@ -8,6 +8,7 @@ python:
 install:
   - pip install coverage
   - pip install coveralls
+  - pip install -r requirements.txt
 script:
   - coverage run --source=har2case -m unittest discover
 after_success:
