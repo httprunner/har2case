@@ -5,6 +5,9 @@ python:
   - 3.4
   - 3.5
   - 3.6
+install:
+  - pip install coverage
+  - pip install coveralls
 script:
   - coverage run --source=har2case -m unittest discover
 after_success:
