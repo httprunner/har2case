@@ -55,6 +55,24 @@ class TestHarParser(TestHar):
         self.assertIn("request", testcase)
         self.assertIn("validate", testcase)
 
+        validators = testcase["validate"]
+        self.assertEqual(
+            validators[0],
+            {'check': 'status_code', 'expect': 200}
+        )
+        self.assertEqual(
+            validators[1],
+            {'check': 'IsSuccess', 'expect': True}
+        )
+        self.assertEqual(
+            validators[2],
+            {'check': 'Code', 'expect': 200}
+        )
+        self.assertEqual(
+            validators[3],
+            {'check': 'Message', 'expect': None}
+        )
+
     def test_make_testcases(self):
         testcases = self.har_parser.make_testcases()
         self.assertIn("name", testcases[0]["test"])
