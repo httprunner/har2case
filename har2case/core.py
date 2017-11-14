@@ -1,3 +1,4 @@
+import io
 import json
 import logging
 import sys
@@ -24,7 +25,7 @@ def load_har_log_entries(file_path):
             },
         ]
     """
-    with open(file_path, "r+") as f:
+    with io.open(file_path, "r+", encoding="utf-8-sig") as f:
         try:
             content_json = json.loads(f.read())
             return content_json["log"]["entries"]
