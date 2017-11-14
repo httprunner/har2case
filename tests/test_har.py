@@ -55,22 +55,21 @@ class TestHarParser(TestHar):
         self.assertIn("request", testcase)
         self.assertIn("validate", testcase)
 
-        validators = testcase["validate"]
+        validators_mapping = {
+            validator["check"]: validator["expect"]
+            for validator in testcase["validate"]
+        }
         self.assertEqual(
-            validators[0],
-            {'check': 'status_code', 'expect': 200}
+            validators_mapping["status_code"], 200
         )
         self.assertEqual(
-            validators[1],
-            {'check': 'IsSuccess', 'expect': True}
+            validators_mapping["IsSuccess"], True
         )
         self.assertEqual(
-            validators[2],
-            {'check': 'Code', 'expect': 200}
+            validators_mapping["Code"], 200
         )
         self.assertEqual(
-            validators[3],
-            {'check': 'Message', 'expect': None}
+            validators_mapping["Message"], None
         )
 
     def test_make_testcases(self):
