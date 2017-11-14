@@ -7,9 +7,11 @@ import yaml
 try:
     # Python3
     import urllib.parse as urlparse
+    string_type = str
 except ImportError:
     # Python2
     import urlparse
+    string_type = basestring
 
 
 def load_har_log_entries(file_path):
@@ -192,6 +194,25 @@ class HarParser(object):
         testcase_dict["validate"].append(
             {"check": "status_code", "expect": entry_json["response"]["status"]}
         )
+
+        resp_content_dict = entry_json["response"]["content"]
+        encoding = resp_content_dict.get("encoding")
+        text = resp_content_dict.get("text")
+        mime_type = resp_content_dict["mimeType"]
+        if text and mime_type.startswith("application/json"):
+            if encoding and encoding == "base64":
+                import base64
+                resp_content_json = json.loads(base64.b64decode(text))
+            else:
+                resp_content_json = json.loads(text)
+
+            for key, value in resp_content_json.items():
+                if isinstance(value, (dict, list)):
+                    continue
+
+                testcase_dict["validate"].append(
+                    {"check": key, "expect": value}
+                )
 
     def make_testcase(self, entry_json):
         """ extract info from entry dict and make testcase
