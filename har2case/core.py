@@ -202,7 +202,8 @@ class HarParser(object):
         if text and mime_type.startswith("application/json"):
             if encoding and encoding == "base64":
                 import base64
-                resp_content_json = json.loads(base64.b64decode(text))
+                content = base64.b64decode(text)
+                resp_content_json = json.loads(content.decode('utf-8'))
             else:
                 resp_content_json = json.loads(text)
 
