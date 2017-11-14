@@ -1,6 +1,22 @@
 har2case
 ========
 
+.. image:: https://img.shields.io/github/license/HttpRunner/har2case.svg
+    :target: https://github.com/HttpRunner/har2case/blob/master/LICENSE
+
+.. image:: https://travis-ci.org/HttpRunner/har2case.svg?branch=master
+    :target: https://travis-ci.org/HttpRunner/har2case
+
+.. image:: https://coveralls.io/repos/github/HttpRunner/har2case/badge.svg?branch=master
+    :target: https://coveralls.io/github/HttpRunner/har2case?branch=master
+
+.. image:: https://img.shields.io/pypi/v/har2case.svg
+    :target: https://pypi.python.org/pypi/har2case
+
+.. image:: https://img.shields.io/pypi/pyversions/har2case.svg
+    :target: https://pypi.python.org/pypi/har2case
+
+
 Convert HAR(HTTP Archive) to YAML/JSON testcases for HttpRunner.
 
 
@@ -61,7 +77,7 @@ As you see, the first parameter is HAR source file path, and the second is conve
 
 The output testset file type is detemined by the suffix of your specified file.
 
-If you only specify HAR source file path, the default output testset is in JSON format and located in the same folder with source file. ::
+If you only specify HAR source file path, the output testset is in JSON format by default and located in the same folder with source file. ::
 
     $ har2case ~/Users/httprunner/demo.har
     INFO:root:Generate JSON testset successfully: ~/Users/httprunner/demo.json
