@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 with io.open("README.rst", encoding='utf-8') as f:
     long_description = f.read()
 
-install_requires = []
+install_requires = open("requirements.txt").readlines()
 
 setup(
     name='har2case',
