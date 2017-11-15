@@ -55,9 +55,10 @@ class HarParser(object):
         ":path"
     ]
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, filter_str=None):
         self.log_entries = load_har_log_entries(file_path)
         self.user_agent = None
+        self.filter_str = filter_str
         self.testset = self.make_testset()
 
     def _make_request_url(self, testcase_dict, entry_json):
@@ -252,10 +253,17 @@ class HarParser(object):
     def make_testcases(self):
         """ extract info from HAR log entries list and make testcase list
         """
-        return [
-            {"test": self.make_testcase(entry_json)}
-            for entry_json in self.log_entries
-        ]
+        testcases = []
+        for entry_json in self.log_entries:
+            url = entry_json["request"]["url"]
+            if self.filter_str and self.filter_str not in url:
+                continue
+
+            testcases.append(
+                {"test": self.make_testcase(entry_json)}
+            )
+
+        return testcases
 
     def make_config(self):
         """ sets config block of testset
