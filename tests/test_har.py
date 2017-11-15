@@ -91,3 +91,17 @@ class TestHarParser(TestHar):
 
         self.har_parser.gen_json(json_file)
         os.remove(json_file)
+
+    def test_filter(self):
+        filter_str = "httprunner"
+        har_parser = HarParser(self.har_path, filter_str)
+        testcases = har_parser.make_testcases()
+        self.assertEqual(
+            testcases[0]["test"]["request"]["url"],
+            "https://httprunner.top/api/v1/Account/Login"
+        )
+
+        filter_str = "debugtalk"
+        har_parser = HarParser(self.har_path, filter_str)
+        testcases = har_parser.make_testcases()
+        self.assertEqual(testcases, [])
