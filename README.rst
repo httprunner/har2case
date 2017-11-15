@@ -41,7 +41,7 @@ virtualenv—which you should—make sure your python script directory is on you
 To see ``har2case`` version: ::
 
     $ har2case -V
-    0.0.3
+    0.0.6
 
 To see available options, run: ::
 
