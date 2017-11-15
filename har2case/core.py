@@ -160,7 +160,7 @@ class HarParser(object):
             mimeType = entry_json["request"]["postData"]["mimeType"]
             post_data = entry_json["request"]["postData"]["text"]
 
-            if mimeType.startswith("application/json"):
+            if mimeType and mimeType.startswith("application/json"):
                 post_data = json.loads(post_data)
                 testcase_dict["request"]["json"] = post_data
             else:
