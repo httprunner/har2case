@@ -63,13 +63,13 @@ class TestHarParser(TestHar):
             validators_mapping["status_code"], 200
         )
         self.assertEqual(
-            validators_mapping["IsSuccess"], True
+            validators_mapping["content.IsSuccess"], True
         )
         self.assertEqual(
-            validators_mapping["Code"], 200
+            validators_mapping["content.Code"], 200
         )
         self.assertEqual(
-            validators_mapping["Message"], None
+            validators_mapping["content.Message"], None
         )
 
     def test_make_testcases(self):
