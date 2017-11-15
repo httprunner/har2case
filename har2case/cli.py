@@ -22,6 +22,8 @@ def main():
     parser.add_argument(
         '--filter', help="Specify filter keyword, only url include filter string will be converted.")
     parser.add_argument(
+        '--exclude', help="Specify exclude keyword, url that includes exclude string will be ignored.")
+    parser.add_argument(
         '--log-level', default='INFO',
         help="Specify logging level, default is INFO.")
 
@@ -55,7 +57,7 @@ def main():
             logging.error("Converted file could only be in YAML or JSON format.")
             sys.exit(1)
 
-    har_parser = HarParser(har_source_file, args.filter)
+    har_parser = HarParser(har_source_file, args.filter, args.exclude)
 
     if output_file_type == "JSON":
         har_parser.gen_json(output_testset_file)
