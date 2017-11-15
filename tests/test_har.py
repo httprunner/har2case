@@ -105,3 +105,17 @@ class TestHarParser(TestHar):
         har_parser = HarParser(self.har_path, filter_str)
         testcases = har_parser.make_testcases()
         self.assertEqual(testcases, [])
+
+    def test_exclude(self):
+        exclude_str = "debugtalk"
+        har_parser = HarParser(self.har_path, exclude_str=exclude_str)
+        testcases = har_parser.make_testcases()
+        self.assertEqual(
+            testcases[0]["test"]["request"]["url"],
+            "https://httprunner.top/api/v1/Account/Login"
+        )
+
+        exclude_str = "httprunner"
+        har_parser = HarParser(self.har_path, exclude_str=exclude_str)
+        testcases = har_parser.make_testcases()
+        self.assertEqual(testcases, [])
