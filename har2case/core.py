@@ -215,7 +215,7 @@ class HarParser(object):
                     continue
 
                 testcase_dict["validate"].append(
-                    {"check": key, "expect": value}
+                    {"check": "content.{}".format(key), "expect": value}
                 )
 
     def make_testcase(self, entry_json):
