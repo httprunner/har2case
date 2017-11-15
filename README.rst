@@ -46,20 +46,25 @@ To see ``har2case`` version: ::
 To see available options, run: ::
 
     $ har2case -h
-    usage: har2case [-h] [-V] [--log-level LOG_LEVEL]
-                    [har_source_file] [output_testset_file]
+    usage: main.py [-h] [-V] [--filter FILTER] [--exclude EXCLUDE]
+                [--log-level LOG_LEVEL]
+                [har_source_file] [output_testset_file]
 
     Convert HAR to YAML/JSON testcases for HttpRunner.
 
     positional arguments:
     har_source_file       Specify HAR source file
-    output_testset_file  Optional. Specify converted YAML/JSON testcase file.
+    output_testset_file   Optional. Specify converted YAML/JSON testset file.
 
     optional arguments:
     -h, --help            show this help message and exit
     -V, --version         show version
+    --filter FILTER       Specify filter keyword, only url include filter string
+                            will be converted.
+    --exclude EXCLUDE     Specify exclude keyword, url that includes exclude
+                            string will be ignored.
     --log-level LOG_LEVEL
-                          Specify logging level, default is INFO.
+                            Specify logging level, default is INFO.
 
 
 examples
@@ -81,6 +86,22 @@ If you only specify HAR source file path, the output testset is in JSON format b
 
     $ har2case tests/data/demo.har
     INFO:root:Generate JSON testset successfully: tests/data/demo.json
+
+**filter**
+
+You can do some filter while conversion, only url that includes filter string will be converted. ::
+
+    $ har2case tests/data/demo.har demo.yml --filter httprunner.top
+
+**exclude** ::
+
+You can also set exclude keyword while conversion, url that includes exclude string will be ignored. ::
+
+    $ har2case tests/data/demo.har demo.yml --exclude debugtalk.com
+
+
+generated testset
+-----------------
 
 Generated YAML testset ``demo.yml`` shows like below:
 
