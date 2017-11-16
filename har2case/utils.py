@@ -12,6 +12,11 @@ except ImportError:
     import urlparse
     string_type = basestring
 
+try:
+    from json.decoder import JSONDecodeError
+except ImportError:
+    JSONDecodeError = ValueError
+
 
 def load_har_log_entries(file_path):
     """ load HAR file and return log entries list
