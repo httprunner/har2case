@@ -48,7 +48,7 @@ def x_www_form_urlencoded(origin_dict):
 
 class HarParser(object):
 
-    IGNORE_HEADERS = [
+    IGNORE_REQUEST_HEADERS = [
         "host",
         "accept",
         "content-length",
@@ -118,7 +118,7 @@ class HarParser(object):
 
     def _make_request_headers(self, testcase_dict, entry_json):
         """ parse HAR entry request headers, and make testcase headers.
-            header in IGNORE_HEADERS will be ignored.
+            header in IGNORE_REQUEST_HEADERS will be ignored.
         @param (dict) entry_json
             {
                 "request": {
@@ -139,7 +139,7 @@ class HarParser(object):
         """
         testcase_headers = {}
         for header in entry_json["request"].get("headers", []):
-            if header["name"].lower() in self.IGNORE_HEADERS:
+            if header["name"].lower() in self.IGNORE_REQUEST_HEADERS:
                 continue
             if header["name"].lower() == "user-agent":
                 if not self.user_agent:
