@@ -155,3 +155,7 @@ class TestUtilsParser(TestUtils):
             testcase_dict["validate"][0],
             {"check": "status_code", "expect": 200}
         )
+        self.assertEqual(
+            testcase_dict["validate"][1],
+            {"check": "headers.Content-Type", "expect": "application/json; charset=utf-8"}
+        )
