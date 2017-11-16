@@ -57,10 +57,9 @@ class HarParser(object):
                 }
             }
         """
-        request_params = {}
-        query_string_list = entry_json["request"].get("queryString", [])
-        for query_string in query_string_list:
-            request_params[query_string["name"]] = query_string["value"]
+        request_params = utils.convert_list_to_dict(
+            entry_json["request"].get("queryString", [])
+        )
 
         url = entry_json["request"].get("url")
         if not url:
@@ -151,10 +150,7 @@ class HarParser(object):
             if text:
                 post_data = text
             else:
-                post_data = {
-                    param["name"]: param["value"]
-                    for param in params
-                }
+                post_data = utils.convert_list_to_dict(params)
 
             request_data_key = "data"
             if not mimeType:
@@ -203,6 +199,14 @@ class HarParser(object):
         )
 
         resp_content_dict = entry_json["response"].get("content")
+
+        headers_mapping = utils.convert_list_to_dict(
+            entry_json["response"].get("headers", [])
+        )
+        if "Content-Type" in headers_mapping:
+            testcase_dict["validate"].append(
+                {"check": "headers.Content-Type", "expect": headers_mapping["Content-Type"]}
+            )
 
         text = resp_content_dict.get("text")
         if not text:
