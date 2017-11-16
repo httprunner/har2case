@@ -169,3 +169,34 @@ class TestHarParser(TestHar):
             testcase_dict["request"]["json"],
             {'a': '1', 'b': '2'}
         )
+
+    def test_make_validate(self):
+        testcase_dict = {
+            "name": "",
+            "request": {},
+            "validate": []
+        }
+        entry_json = {
+            "request": {},
+            "response": {
+                "status": 200,
+                "headers": [
+                    {
+                        "name": "Content-Type",
+                        "value": "application/json; charset=utf-8"
+                    },
+                ],
+                "content": {
+                    "size": 71,
+                    "mimeType": "application/json; charset=utf-8",
+                    # raw response content text is application/jose type
+                    "text": "ZXlKaGJHY2lPaUpTVTBFeFh6VWlMQ0psYm1NaU9pSkJNVEk0UTBKRExV",
+                    "encoding": "base64"
+                }
+            }
+        }
+        self.har_parser._make_validate(testcase_dict, entry_json)
+        self.assertEqual(
+            testcase_dict["validate"][0],
+            {"check": "status_code", "expect": 200}
+        )

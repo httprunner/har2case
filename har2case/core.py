@@ -1,3 +1,4 @@
+import base64
 import io
 import json
 import logging
@@ -241,14 +242,22 @@ class HarParser(object):
         )
 
         resp_content_dict = entry_json["response"].get("content")
-        encoding = resp_content_dict.get("encoding")
+
         text = resp_content_dict.get("text")
+        if not text:
+            return
+
         mime_type = resp_content_dict["mimeType"]
-        if text and mime_type.startswith("application/json"):
+        if mime_type.startswith("application/json"):
+
+            encoding = resp_content_dict.get("encoding")
             if encoding and encoding == "base64":
-                import base64
-                content = base64.b64decode(text)
-                resp_content_json = json.loads(content.decode('utf-8'))
+                content = base64.b64decode(text).decode('utf-8')
+                try:
+                    resp_content_json = json.loads(content)
+                except json.decoder.JSONDecodeError:
+                    logging.warning("response content can not be loaded as json.")
+                    return
             else:
                 resp_content_json = json.loads(text)
 
