@@ -127,11 +127,13 @@ Generated YAML testset ``demo.yml`` shows like below:
             validate:
             -   check: status_code
                 expect: 200
-            -   check: IsSuccess
+            -   check: headers.Content-Type
+                expect: application/json; charset=utf-8
+            -   check: content.IsSuccess
                 expect: true
-            -   check: Code
+            -   check: content.Code
                 expect: 200
-            -   check: Message
+            -   check: content.Message
                 expect: null
 
 And generated JSON testset ``demo.json`` shows like this:
@@ -165,9 +167,10 @@ And generated JSON testset ``demo.json`` shows like this:
                 },
                 "validate": [
                     {"check": "status_code", "expect": 200},
-                    {"check": "IsSuccess", "expect": true},
-                    {"check": "Code", "expect": 200},
-                    {"check": "Message", "expect": null}
+                    {"check": "headers.Content-Type", "expect": "application/json; charset=utf-8"},
+                    {"check": "content.IsSuccess", "expect": true},
+                    {"check": "content.Code", "expect": 200},
+                    {"check": "content.Message", "expect": null}
                 ]
             }
         }
