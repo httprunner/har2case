@@ -89,13 +89,18 @@ class HarParser(object):
         for query_string in query_string_list:
             request_params[query_string["name"]] = query_string["value"]
 
-        parsed_object = urlparse.urlparse(entry_json["request"]["url"])
+        url = entry_json["request"].get("url")
+        if not url:
+            logging.exception("url missed in request.")
+            sys.exit(1)
+
+        parsed_object = urlparse.urlparse(url)
         if request_params:
             testcase_dict["request"]["params"] = request_params
             parsed_object = parsed_object._replace(query='')
             testcase_dict["request"]["url"] = parsed_object.geturl()
         else:
-            testcase_dict["request"]["url"] = entry_json["request"]["url"]
+            testcase_dict["request"]["url"] = url
 
         testcase_dict["name"] = parsed_object.path
 
@@ -155,10 +160,15 @@ class HarParser(object):
                 }
             }
         """
-        method = entry_json["request"]["method"]
+        method = entry_json["request"].get("method")
+        if not method:
+            logging.exception("method missed in request.")
+            sys.exit(1)
+
+        testcase_dict["request"]["method"] = method
         if method == "POST":
-            mimeType = entry_json["request"]["postData"]["mimeType"]
-            post_data = entry_json["request"]["postData"]["text"]
+            mimeType = entry_json["request"].get("postData", {}).get("mimeType")
+            post_data = entry_json["request"].get("postData", {}).get("text")
 
             if mimeType and mimeType.startswith("application/json"):
                 post_data = json.loads(post_data)
@@ -195,10 +205,10 @@ class HarParser(object):
             }
         """
         testcase_dict["validate"].append(
-            {"check": "status_code", "expect": entry_json["response"]["status"]}
+            {"check": "status_code", "expect": entry_json["response"].get("status")}
         )
 
-        resp_content_dict = entry_json["response"]["content"]
+        resp_content_dict = entry_json["response"].get("content")
         encoding = resp_content_dict.get("encoding")
         text = resp_content_dict.get("text")
         mime_type = resp_content_dict["mimeType"]
@@ -238,9 +248,7 @@ class HarParser(object):
         """
         testcase_dict = {
             "name": "",
-            "request": {
-                "method": entry_json["request"]["method"]
-            },
+            "request": {},
             "validate": []
         }
 
@@ -256,7 +264,7 @@ class HarParser(object):
         """
         testcases = []
         for entry_json in self.log_entries:
-            url = entry_json["request"]["url"]
+            url = entry_json["request"].get("url")
             if self.filter_str and self.filter_str not in url:
                 continue
 
