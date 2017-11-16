@@ -1,50 +1,11 @@
 import base64
-import io
 import json
 import logging
 import sys
 
 import yaml
+from har2case import utils
 
-try:
-    # Python3
-    import urllib.parse as urlparse
-    string_type = str
-except ImportError:
-    # Python2
-    import urlparse
-    string_type = basestring
-
-
-def load_har_log_entries(file_path):
-    """ load HAR file and return log entries list
-    @return (list) entries
-        [
-            {
-                "request": {},
-                "response": {}
-            },
-        ]
-    """
-    with io.open(file_path, "r+", encoding="utf-8-sig") as f:
-        try:
-            content_json = json.loads(f.read())
-            return content_json["log"]["entries"]
-        except (KeyError, TypeError):
-            logging.error("HAR file content error: {}".format(file_path))
-            sys.exit(1)
-
-def x_www_form_urlencoded(origin_dict):
-    """ convert origin dict to x-www-form-urlencoded
-    @param (dict) origin_dict
-        {"a": 1, "b":2}
-    @return (str)
-        a=1&b=2
-    """
-    return "&".join([
-        "{}={}".format(key, value)
-        for key, value in origin_dict.items()
-    ])
 
 class HarParser(object):
 
@@ -68,7 +29,7 @@ class HarParser(object):
     ]
 
     def __init__(self, file_path, filter_str=None, exclude_str=None):
-        self.log_entries = load_har_log_entries(file_path)
+        self.log_entries = utils.load_har_log_entries(file_path)
         self.user_agent = None
         self.filter_str = filter_str
         self.exclude_str = exclude_str
@@ -106,7 +67,7 @@ class HarParser(object):
             logging.exception("url missed in request.")
             sys.exit(1)
 
-        parsed_object = urlparse.urlparse(url)
+        parsed_object = utils.urlparse.urlparse(url)
         if request_params:
             testcase_dict["request"]["params"] = request_params
             parsed_object = parsed_object._replace(query='')
@@ -202,7 +163,7 @@ class HarParser(object):
                 post_data = json.loads(post_data)
                 request_data_key = "json"
             elif mimeType.startswith("application/x-www-form-urlencoded"):
-                post_data = x_www_form_urlencoded(post_data)
+                post_data = utils.x_www_form_urlencoded(post_data)
             else:
                 #TODO: make compatible with more mimeType
                 pass
