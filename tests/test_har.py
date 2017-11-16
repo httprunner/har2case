@@ -125,3 +125,47 @@ class TestHarParser(TestHar):
         har_parser = HarParser(self.har_path, exclude_str=exclude_str)
         testcases = har_parser.make_testcases()
         self.assertEqual(testcases, [])
+
+    def test_make_request_data_params(self):
+        testcase_dict = {
+            "name": "",
+            "request": {},
+            "validate": []
+        }
+        entry_json = {
+            "request": {
+                "method": "POST",
+                "postData": {
+                    "mimeType": "application/x-www-form-urlencoded; charset=utf-8",
+                    "params": [
+                        {"name": "a", "value": 1},
+                        {"name": "b", "value": "2"}
+                    ]
+                },
+            }
+        }
+        self.har_parser._make_request_data(testcase_dict, entry_json)
+        self.assertEqual(testcase_dict["request"]["method"], "POST")
+        self.assertEqual(testcase_dict["request"]["data"], "a=1&b=2")
+
+    def test_make_request_data_json(self):
+        testcase_dict = {
+            "name": "",
+            "request": {},
+            "validate": []
+        }
+        entry_json = {
+            "request": {
+                "method": "POST",
+                "postData": {
+                    "mimeType": "application/json; charset=utf-8",
+                    "text": "{\"a\":\"1\",\"b\":\"2\"}"
+                },
+            }
+        }
+        self.har_parser._make_request_data(testcase_dict, entry_json)
+        self.assertEqual(testcase_dict["request"]["method"], "POST")
+        self.assertEqual(
+            testcase_dict["request"]["json"],
+            {'a': '1', 'b': '2'}
+        )
