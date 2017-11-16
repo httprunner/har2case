@@ -2,7 +2,7 @@ import json
 import os
 import unittest
 
-from har2case.core import HarParser, load_har_log_entries
+from har2case.core import HarParser, load_har_log_entries, x_www_form_urlencoded
 
 
 class TestHar(unittest.TestCase):
@@ -42,6 +42,12 @@ class TestHar(unittest.TestCase):
         with self.assertRaises(SystemExit):
             load_har_log_entries(self.empty_file_path)
 
+    def test_x_www_form_urlencoded(self):
+        origin_dict = {"a":1, "b": "2"}
+        self.assertEqual(
+            x_www_form_urlencoded(origin_dict),
+            "a=1&b=2"
+        )
 
 class TestHarParser(TestHar):
 
