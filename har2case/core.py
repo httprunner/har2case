@@ -33,6 +33,17 @@ def load_har_log_entries(file_path):
             logging.error("HAR file content error: {}".format(file_path))
             sys.exit(1)
 
+def x_www_form_urlencoded(origin_dict):
+    """ convert origin dict to x-www-form-urlencoded
+    @param (dict) origin_dict
+        {"a": 1, "b":2}
+    @return (str)
+        a=1&b=2
+    """
+    return "&".join([
+        "{}={}".format(key, value)
+        for key, value in origin_dict.items()
+    ])
 
 class HarParser(object):
 
