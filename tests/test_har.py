@@ -101,7 +101,8 @@ class TestUtilsParser(TestUtils):
         }
         self.har_parser._make_request_data(testcase_dict, entry_json)
         self.assertEqual(testcase_dict["request"]["method"], "POST")
-        self.assertEqual(testcase_dict["request"]["data"], "a=1&b=2")
+        self.assertIn("a=1", testcase_dict["request"]["data"])
+        self.assertIn("b=2", testcase_dict["request"]["data"])
 
     def test_make_request_data_json(self):
         testcase_dict = {

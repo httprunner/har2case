@@ -220,7 +220,7 @@ class HarParser(object):
                 content = base64.b64decode(text).decode('utf-8')
                 try:
                     resp_content_json = json.loads(content)
-                except json.decoder.JSONDecodeError:
+                except utils.JSONDecodeError:
                     logging.warning("response content can not be loaded as json.")
                     return
             else:
