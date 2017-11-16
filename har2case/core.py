@@ -155,19 +155,22 @@ class HarParser(object):
         @param (dict) entry_json
             {
                 "request": {
-                    "url": "https://httprunner.top/home?v=1&w=2",
-                    "queryString": [
-                        {"name": "v", "value": "1"},
-                        {"name": "w", "value": "2"}
-                    ],
+                    "method": "POST",
+                    "postData": {
+                        "mimeType": "application/x-www-form-urlencoded; charset=utf-8",
+                        "params": [
+                            {"name": "a", "value": 1},
+                            {"name": "b", "value": "2"}
+                        }
+                    },
                 },
-                "response": {}
+                "response": {...}
             }
         @output testcase_dict:
             {
                 "request": {
-                    url: "https://httprunner.top/home",
-                    params: {"v": "1", "w": "2"}
+                    "method": "POST",
+                    "data": {"v": "1", "w": "2"}
                 }
             }
         """
@@ -179,13 +182,31 @@ class HarParser(object):
         testcase_dict["request"]["method"] = method
         if method == "POST":
             mimeType = entry_json["request"].get("postData", {}).get("mimeType")
-            post_data = entry_json["request"].get("postData", {}).get("text")
 
-            if mimeType and mimeType.startswith("application/json"):
-                post_data = json.loads(post_data)
-                testcase_dict["request"]["json"] = post_data
+            # Note that text and params fields are mutually exclusive.
+            params = entry_json["request"].get("postData", {}).get("params", [])
+            text = entry_json["request"].get("postData", {}).get("text")
+            if text:
+                post_data = text
             else:
-                testcase_dict["request"]["data"] = post_data
+                post_data = {
+                    param["name"]: param["value"]
+                    for param in params
+                }
+
+            request_data_key = "data"
+            if not mimeType:
+                pass
+            elif mimeType.startswith("application/json"):
+                post_data = json.loads(post_data)
+                request_data_key = "json"
+            elif mimeType.startswith("application/x-www-form-urlencoded"):
+                post_data = x_www_form_urlencoded(post_data)
+            else:
+                #TODO: make compatible with more mimeType
+                pass
+
+            testcase_dict["request"][request_data_key] = post_data
 
     def _make_validate(self, testcase_dict, entry_json):
         """ parse HAR entry response and make testcase validate.
