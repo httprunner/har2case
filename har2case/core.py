@@ -226,6 +226,9 @@ class HarParser(object):
             else:
                 resp_content_json = json.loads(text)
 
+            if not isinstance(resp_content_json, dict):
+                return
+
             for key, value in resp_content_json.items():
                 if isinstance(value, (dict, list)):
                     continue
