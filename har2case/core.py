@@ -312,7 +312,7 @@ class HarParser(object):
         """
         logging.debug("Start to generate YAML testset.")
 
-        with open(yaml_file, 'w') as outfile:
+        with open(yaml_file, 'w', encoding="utf-8") as outfile:
             yaml.dump(self.testset, outfile, allow_unicode=True, default_flow_style=False, indent=4)
 
         logging.info("Generate YAML testset successfully: {}".format(yaml_file))
@@ -322,7 +322,7 @@ class HarParser(object):
         """
         logging.debug("Start to generate JSON testset.")
 
-        with open(json_file, 'w') as outfile:
+        with open(json_file, 'w', encoding="utf-8") as outfile:
             json.dump(self.testset, outfile, ensure_ascii=utils.ensure_ascii, indent=2)
 
         logging.info("Generate JSON testset successfully: {}".format(json_file))
