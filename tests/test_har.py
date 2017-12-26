@@ -17,7 +17,7 @@ class TestUtilsParser(TestUtils):
         self.assertIn("validate", testcase)
 
         validators_mapping = {
-            validator["check"]: validator["expect"]
+            validator["eq"][0]: validator["eq"][1]
             for validator in testcase["validate"]
         }
         self.assertEqual(
@@ -154,9 +154,9 @@ class TestUtilsParser(TestUtils):
         self.har_parser._make_validate(testcase_dict, entry_json)
         self.assertEqual(
             testcase_dict["validate"][0],
-            {"check": "status_code", "expect": 200}
+            {"eq": ["status_code", 200]}
         )
         self.assertEqual(
             testcase_dict["validate"][1],
-            {"check": "headers.Content-Type", "expect": "application/json; charset=utf-8"}
+            {"eq": ["headers.Content-Type", "application/json; charset=utf-8"]}
         )
