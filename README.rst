@@ -41,7 +41,7 @@ virtualenv—which you should—make sure your python script directory is on you
 To see ``har2case`` version: ::
 
     $ har2case -V
-    0.1.3
+    0.1.4
 
 To see available options, run: ::
 
@@ -125,16 +125,21 @@ Generated YAML testset ``demo.yml`` shows like below:
                 method: POST
                 url: https://httprunner.top/api/v1/Account/Login
             validate:
-            -   check: status_code
-                expect: 200
-            -   check: headers.Content-Type
-                expect: application/json; charset=utf-8
-            -   check: content.IsSuccess
-                expect: true
-            -   check: content.Code
-                expect: 200
-            -   check: content.Message
-                expect: null
+            -   eq:
+                - status_code
+                - 200
+            -   eq:
+                - headers.Content-Type
+                - application/json; charset=utf-8
+            -   eq:
+                - content.IsSuccess
+                - true
+            -   eq:
+                - content.Code
+                - 200
+            -   eq:
+                - content.Message
+                - null
 
 And generated JSON testset ``demo.json`` shows like this:
 
@@ -166,11 +171,11 @@ And generated JSON testset ``demo.json`` shows like this:
                     }
                 },
                 "validate": [
-                    {"check": "status_code", "expect": 200},
-                    {"check": "headers.Content-Type", "expect": "application/json; charset=utf-8"},
-                    {"check": "content.IsSuccess", "expect": true},
-                    {"check": "content.Code", "expect": 200},
-                    {"check": "content.Message", "expect": null}
+                    {"eq": ["status_code", 200]},
+                    {"eq": ["headers.Content-Type", "application/json; charset=utf-8"]},
+                    {"eq": ["content.IsSuccess", true]},
+                    {"eq": ["content.Code", 200]},
+                    {"eq": ["content.Message", null]}
                 ]
             }
         }

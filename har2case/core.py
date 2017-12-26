@@ -190,12 +190,12 @@ class HarParser(object):
         @output testcase_dict:
             {
                 "validate": [
-                    {"check": "status_code", "expect": 200}
+                    {"eq": ["status_code", 200]}
                 ]
             }
         """
         testcase_dict["validate"].append(
-            {"check": "status_code", "expect": entry_json["response"].get("status")}
+            {"eq": ["status_code", entry_json["response"].get("status")]}
         )
 
         resp_content_dict = entry_json["response"].get("content")
@@ -205,7 +205,7 @@ class HarParser(object):
         )
         if "Content-Type" in headers_mapping:
             testcase_dict["validate"].append(
-                {"check": "headers.Content-Type", "expect": headers_mapping["Content-Type"]}
+                {"eq": ["headers.Content-Type", headers_mapping["Content-Type"]]}
             )
 
         text = resp_content_dict.get("text")
@@ -234,7 +234,7 @@ class HarParser(object):
                     continue
 
                 testcase_dict["validate"].append(
-                    {"check": "content.{}".format(key), "expect": value}
+                    {"eq": ["content.{}".format(key), value]}
                 )
 
     def make_testcase(self, entry_json):
