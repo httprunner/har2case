@@ -22,7 +22,8 @@ def main():
     parser.add_argument(
         '--filter', help="Specify filter keyword, only url include filter string will be converted.")
     parser.add_argument(
-        '--exclude', help="Specify exclude keyword, url that includes exclude string will be ignored.")
+        '--exclude',
+        help="Specify exclude keyword, url that includes exclude string will be ignored, multiple keywords can be joined with '|'")
     parser.add_argument(
         '--log-level', default='INFO',
         help="Specify logging level, default is INFO.")

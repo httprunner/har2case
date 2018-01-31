@@ -32,7 +32,7 @@ class HarParser(object):
         self.log_entries = utils.load_har_log_entries(file_path)
         self.user_agent = None
         self.filter_str = filter_str
-        self.exclude_str = exclude_str
+        self.exclude_str = exclude_str or ""
         self.testset = self.make_testset()
 
     def _make_request_url(self, testcase_dict, entry_json):
@@ -271,13 +271,21 @@ class HarParser(object):
     def make_testcases(self):
         """ extract info from HAR log entries list and make testcase list
         """
+        def is_exclude(url, exclude_str):
+            exclude_str_list = exclude_str.split("|")
+            for exclude_str in exclude_str_list:
+                if exclude_str and exclude_str in url:
+                    return True
+
+            return False
+
         testcases = []
         for entry_json in self.log_entries:
             url = entry_json["request"].get("url")
             if self.filter_str and self.filter_str not in url:
                 continue
 
-            if self.exclude_str and self.exclude_str in url:
+            if is_exclude(url, self.exclude_str):
                 continue
 
             testcases.append(
