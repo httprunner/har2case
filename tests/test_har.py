@@ -81,6 +81,17 @@ class TestUtilsParser(TestUtils):
         testcases = har_parser.make_testcases()
         self.assertEqual(testcases, [])
 
+    def test_exclude_multiple(self):
+        exclude_str = "httprunner|v2"
+        har_parser = HarParser(self.har_path, exclude_str=exclude_str)
+        testcases = har_parser.make_testcases()
+        self.assertEqual(testcases, [])
+
+        exclude_str = "http2|v1"
+        har_parser = HarParser(self.har_path, exclude_str=exclude_str)
+        testcases = har_parser.make_testcases()
+        self.assertEqual(testcases, [])
+
     def test_make_request_data_params(self):
         testcase_dict = {
             "name": "",
