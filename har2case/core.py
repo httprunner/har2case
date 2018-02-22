@@ -300,9 +300,12 @@ class HarParser(object):
         config_dict = {
             "name": "testset description",
             "variables": [],
-            "headers": {}
+            "request": {
+                "base_url": "",
+                "headers": {}
+            }
         }
-        config_dict["headers"]["User-Agent"] = self.user_agent
+        config_dict["request"]["headers"]["User-Agent"] = self.user_agent
 
         return {"config": config_dict}
 

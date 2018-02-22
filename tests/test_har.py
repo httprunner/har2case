@@ -4,7 +4,7 @@ from har2case.core import HarParser
 from tests.test_utils import TestUtils
 
 
-class TestUtilsParser(TestUtils):
+class TestHar(TestUtils):
 
     def setUp(self):
         self.har_parser = HarParser(self.har_path)
@@ -171,3 +171,14 @@ class TestUtilsParser(TestUtils):
             testcase_dict["validate"][1],
             {"eq": ["headers.Content-Type", "application/json; charset=utf-8"]}
         )
+
+    def test_make_testset(self):
+        har_path = os.path.join(
+            os.path.dirname(__file__), "data", "demo-quickstart.har")
+        har_parser = HarParser(har_path)
+        testset = har_parser.make_testset()
+        testset_config = testset[0]
+        self.assertIn("config", testset_config)
+        self.assertIn("request", testset_config["config"])
+        self.assertIn("headers", testset_config["config"]["request"])
+        self.assertEqual(testset_config["config"]["request"]["base_url"], "")
