@@ -331,6 +331,6 @@ class HarParser(object):
         logging.debug("Start to generate JSON testset.")
 
         with open(json_file, 'w') as outfile:
-            json.dump(self.testset, outfile, ensure_ascii=utils.ensure_ascii, indent=2)
+            json.dump(self.testset, outfile, ensure_ascii=utils.ensure_ascii, indent=4)
 
         logging.info("Generate JSON testset successfully: {}".format(json_file))
