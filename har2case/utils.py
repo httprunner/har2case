@@ -48,7 +48,7 @@ def x_www_form_urlencoded(post_data):
     """
     if isinstance(post_data, dict):
         return "&".join([
-            "{}={}".format(key, value)
+            u"{}={}".format(key, value)
             for key, value in post_data.items()
         ])
     else:
