@@ -4,17 +4,6 @@ import logging
 import sys
 
 try:
-    # Python3
-    import urllib.parse as urlparse
-    string_type = str
-    ensure_ascii = False
-except ImportError:
-    # Python2
-    import urlparse
-    string_type = basestring
-    ensure_ascii = True
-
-try:
     from json.decoder import JSONDecodeError
 except ImportError:
     JSONDecodeError = ValueError
