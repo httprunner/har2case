@@ -6,6 +6,7 @@ import sys
 
 import yaml
 from har2case import utils
+from har2case.compat import bytes, ensure_ascii, urlparse
 
 
 class HarParser(object):
@@ -67,7 +68,7 @@ class HarParser(object):
             logging.exception("url missed in request.")
             sys.exit(1)
 
-        parsed_object = utils.urlparse.urlparse(url)
+        parsed_object = urlparse.urlparse(url)
         if request_params:
             testcase_dict["request"]["params"] = request_params
             parsed_object = parsed_object._replace(query='')
@@ -335,6 +336,10 @@ class HarParser(object):
         logging.debug("Start to generate JSON testset.")
 
         with io.open(json_file, 'w', encoding="utf-8") as outfile:
-            json.dump(self.testset, outfile, ensure_ascii=utils.ensure_ascii, indent=4)
+            my_json_str = json.dumps(self.testset, ensure_ascii=ensure_ascii, indent=4)
+            if isinstance(my_json_str, bytes):
+                my_json_str = my_json_str.decode("utf-8")
+
+            outfile.write(my_json_str)
 
         logging.info("Generate JSON testset successfully: {}".format(json_file))
