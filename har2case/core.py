@@ -214,8 +214,8 @@ class HarParser(object):
         if not text:
             return
 
-        mime_type = resp_content_dict["mimeType"]
-        if mime_type.startswith("application/json"):
+        mime_type = resp_content_dict.get("mimeType")
+        if mime_type and mime_type.startswith("application/json"):
 
             encoding = resp_content_dict.get("encoding")
             if encoding and encoding == "base64":
