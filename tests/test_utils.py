@@ -42,10 +42,10 @@ class TestUtils(unittest.TestCase):
         with self.assertRaises(SystemExit):
             utils.load_har_log_entries(self.empty_file_path)
 
-    def test_x_www_form_urlencoded(self):
-        origin_dict = {"a":1, "b": "2"}
-        self.assertIn("a=1", utils.x_www_form_urlencoded(origin_dict))
-        self.assertIn("b=2", utils.x_www_form_urlencoded(origin_dict))
+    # def test_x_www_form_urlencoded(self):
+    #     origin_dict = {"a":1, "b": "2"}
+    #     self.assertIn("a=1", utils.x_www_form_urlencoded(origin_dict))
+    #     self.assertIn("b=2", utils.x_www_form_urlencoded(origin_dict))
 
     def test_convert_list_to_dict(self):
         origin_list = [

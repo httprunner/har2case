@@ -161,7 +161,8 @@ class HarParser(object):
                 post_data = json.loads(post_data)
                 request_data_key = "json"
             elif mimeType.startswith("application/x-www-form-urlencoded"):
-                post_data = utils.x_www_form_urlencoded(post_data)
+                # post_data = utils.x_www_form_urlencoded(post_data)
+                pass
             else:
                 #TODO: make compatible with more mimeType
                 pass
