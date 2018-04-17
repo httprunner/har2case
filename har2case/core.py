@@ -143,7 +143,7 @@ class HarParser(object):
             sys.exit(1)
 
         testcase_dict["request"]["method"] = method
-        if method == "POST":
+        if method in ["POST", "PUT"]:
             mimeType = entry_json["request"].get("postData", {}).get("mimeType")
 
             # Note that text and params fields are mutually exclusive.
