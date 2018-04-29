@@ -3,6 +3,7 @@ import io
 import json
 import logging
 import sys
+from collections import OrderedDict
 
 import yaml
 from har2case import utils
@@ -35,7 +36,10 @@ class HarParser(object):
         self.user_agent = None
         self.filter_str = filter_str
         self.exclude_str = exclude_str or ""
-        self.testset = self.make_testset()
+        self.ordered_dict = True
+
+    def init_dict(self):
+        return OrderedDict() if self.ordered_dict else {}
 
     def _make_request_url(self, testcase_dict, entry_json):
         """ parse HAR entry request url and queryString, and make testcase url and params
@@ -70,13 +74,23 @@ class HarParser(object):
 
         parsed_object = urlparse.urlparse(url)
         if request_params:
-            testcase_dict["request"]["params"] = request_params
             parsed_object = parsed_object._replace(query='')
             testcase_dict["request"]["url"] = parsed_object.geturl()
+            testcase_dict["request"]["params"] = request_params
         else:
             testcase_dict["request"]["url"] = url
 
         testcase_dict["name"] = parsed_object.path
+
+    def _make_request_method(self, testcase_dict, entry_json):
+        """ parse HAR entry request method, and make testcase method.
+        """
+        method = entry_json["request"].get("method")
+        if not method:
+            logging.exception("method missed in request.")
+            sys.exit(1)
+
+        testcase_dict["request"]["method"] = method
 
     def _make_request_headers(self, testcase_dict, entry_json):
         """ parse HAR entry request headers, and make testcase headers.
@@ -138,11 +152,6 @@ class HarParser(object):
             }
         """
         method = entry_json["request"].get("method")
-        if not method:
-            logging.exception("method missed in request.")
-            sys.exit(1)
-
-        testcase_dict["request"]["method"] = method
         if method in ["POST", "PUT"]:
             mimeType = entry_json["request"].get("postData", {}).get("mimeType")
 
@@ -261,13 +270,13 @@ class HarParser(object):
                 }
             }
         """
-        testcase_dict = {
-            "name": "",
-            "request": {},
-            "validate": []
-        }
+        testcase_dict = self.init_dict()
+        testcase_dict["name"] = ""
+        testcase_dict["request"] = self.init_dict()
+        testcase_dict["validate"] = []
 
         self._make_request_url(testcase_dict, entry_json)
+        self._make_request_method(testcase_dict, entry_json)
         self._make_request_headers(testcase_dict, entry_json)
         self._make_request_data(testcase_dict, entry_json)
         self._make_validate(testcase_dict, entry_json)
@@ -303,21 +312,22 @@ class HarParser(object):
     def make_config(self):
         """ sets config block of testset
         """
-        config_dict = {
-            "name": "testset description",
-            "variables": [],
-            "request": {
-                "base_url": "",
-                "headers": {}
-            }
+        config_dict = self.init_dict()
+        config_dict["name"] = "testset description"
+        config_dict["variables"] = []
+
+        config_dict["request"] = self.init_dict()
+        config_dict["request"]["base_url"] = ""
+        config_dict["request"]["headers"] = {
+            "User-Agent": self.user_agent
         }
-        config_dict["request"]["headers"]["User-Agent"] = self.user_agent
 
         return {"config": config_dict}
 
-    def make_testset(self):
+    def make_testset(self, ordered_dict=True):
         """ Extract info from HAR file and prepare for testcase
         """
+        self.ordered_dict = ordered_dict
         logging.debug("Extract info from HAR file and prepare for testcase.")
         testset = self.make_testcases()
         config = self.make_config()
@@ -327,6 +337,7 @@ class HarParser(object):
     def gen_yaml(self, yaml_file):
         """ dump HAR entries to yaml testset
         """
+        self.testset = self.make_testset(False)
         logging.debug("Start to generate YAML testset.")
 
         with io.open(yaml_file, 'w', encoding="utf-8") as outfile:
@@ -337,6 +348,7 @@ class HarParser(object):
     def gen_json(self, json_file):
         """ dump HAR entries to json testset
         """
+        self.testset = self.make_testset(True)
         logging.debug("Start to generate JSON testset.")
 
         with io.open(json_file, 'w', encoding="utf-8") as outfile:
