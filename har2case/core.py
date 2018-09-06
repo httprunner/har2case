@@ -153,14 +153,14 @@ class HarParser(object):
         """
         method = entry_json["request"].get("method")
         if method in ["POST", "PUT"]:
-            mimeType = entry_json["request"].get("postData", {}).get("mimeType")
+            postData = entry_json["request"].get("postData", {})
+            mimeType = postData.get("mimeType")
 
             # Note that text and params fields are mutually exclusive.
-            params = entry_json["request"].get("postData", {}).get("params", [])
-            text = entry_json["request"].get("postData", {}).get("text")
-            if text:
-                post_data = text
+            if "text" in postData:
+                post_data = postData.get("text")
             else:
+                params = postData.get("params", [])
                 post_data = utils.convert_list_to_dict(params)
 
             request_data_key = "data"
