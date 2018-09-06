@@ -135,6 +135,27 @@ class TestHar(TestUtils):
             {'a': '1', 'b': '2'}
         )
 
+    def test_make_request_data_text_empty(self):
+        testcase_dict = {
+            "name": "",
+            "request": {},
+            "validate": []
+        }
+        entry_json = {
+            "request": {
+                "method": "POST",
+                "postData": {
+                    "mimeType": "application/json; charset=utf-8",
+                    "text": ""
+                },
+            }
+        }
+        self.har_parser._make_request_data(testcase_dict, entry_json)
+        self.assertEqual(
+            testcase_dict["request"]["data"],
+            ""
+        )
+
     def test_make_validate(self):
         testcase_dict = {
             "name": "",
