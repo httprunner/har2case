@@ -54,6 +54,6 @@ def convert_list_to_dict(origin_list):
         {"v": "1", "w": "2"}
     """
     return {
-        item["name"]: item["value"]
+        item["name"]: item.get("value")
         for item in origin_list
     }
