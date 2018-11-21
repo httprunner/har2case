@@ -152,7 +152,7 @@ class HarParser(object):
             }
         """
         method = entry_json["request"].get("method")
-        if method in ["POST", "PUT"]:
+        if method in ["POST", "PUT", "PATCH"]:
             postData = entry_json["request"].get("postData", {})
             mimeType = postData.get("mimeType")
 
