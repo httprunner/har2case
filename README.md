@@ -1,6 +1,6 @@
 # har2case
 
-[![LICENSE](https://img.shields.io/github/license/HttpRunner/har2case.svg)](https://github.com/HttpRunner/har2case/blob/master/LICENSE) [![travis-ci](https://travis-ci.org/HttpRunner/har2case.svg?branch=master)](https://travis-ci.org/HttpRunner/har2case) [![coveralls](https://coveralls.io/repos/github/HttpRunner/har2case/badge.svg?branch=master)](https://coveralls.io/github/HttpRunner/har2case?branch=master) [![pypi version](https://img.shields.io/pypi/v/har2case.svg)](https://pypi.python.org/pypi/har2case) [![pyversions](https://img.shields.io/pypi/pyversions/har2case.svg)](https://pypi.python.org/pypi/har2case)
+[![LICENSE](https://img.shields.io/github/license/HttpRunner/har2case.svg)](https://pypi.org/project/har2case/) [![travis-ci](https://travis-ci.org/HttpRunner/har2case.svg?branch=master)](https://travis-ci.org/HttpRunner/har2case) [![coveralls](https://coveralls.io/repos/github/HttpRunner/har2case/badge.svg?branch=master)](https://coveralls.io/github/HttpRunner/har2case?branch=master) [![pypi version](https://img.shields.io/pypi/v/har2case.svg)](https://pypi.python.org/project/har2case/) [![pyversions](https://img.shields.io/pypi/pyversions/har2case.svg)](https://pypi.python.org/project/har2case/)
 
 Convert HAR(HTTP Archive) to YAML/JSON testcases for HttpRunner.
 
