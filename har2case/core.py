@@ -1,10 +1,8 @@
 import base64
-import io
 import json
 import logging
 import os
 import sys
-from collections import OrderedDict
 
 from har2case import utils
 from har2case.compat import urlparse
