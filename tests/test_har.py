@@ -1,5 +1,6 @@
 import os
 
+from har2case.utils import load_har_log_entries
 from har2case.core import HarParser
 from tests.test_utils import TestUtils
 
@@ -8,17 +9,17 @@ class TestHar(TestUtils):
 
     def setUp(self):
         self.har_parser = HarParser(self.har_path)
-        self.log_entries = self.har_parser.log_entries
 
-    def test_make_testcase(self):
-        testcase = self.har_parser.make_testcase(self.log_entries[0])
-        self.assertIn("name", testcase)
-        self.assertIn("request", testcase)
-        self.assertIn("validate", testcase)
+    def test_prepare_teststep(self):
+        log_entries = load_har_log_entries(self.har_path)
+        teststep_dict = self.har_parser._prepare_teststep(log_entries[0])
+        self.assertIn("name", teststep_dict)
+        self.assertIn("request", teststep_dict)
+        self.assertIn("validate", teststep_dict)
 
         validators_mapping = {
             validator["eq"][0]: validator["eq"][1]
-            for validator in testcase["validate"]
+            for validator in teststep_dict["validate"]
         }
         self.assertEqual(
             validators_mapping["status_code"], 200
@@ -33,64 +34,73 @@ class TestHar(TestUtils):
             validators_mapping["content.Message"], None
         )
 
-    def test_make_testcases(self):
-        testcases = self.har_parser.make_testcases()
-        self.assertIn("name", testcases[0]["test"])
-        self.assertIn("request", testcases[0]["test"])
-        self.assertIn("validate", testcases[0]["test"])
+    def test_prepare_teststeps(self):
+        testcase = []
+        self.har_parser._prepare_teststeps(testcase)
+        self.assertIn("name", testcase[0]["test"])
+        self.assertIn("request", testcase[0]["test"])
+        self.assertIn("validate", testcase[0]["test"])
 
-    def test_gen_yaml(self):
+    def test_gen_testcase_yaml(self):
         yaml_file = os.path.join(
-            os.path.dirname(__file__), "data", "demo.yml")
+            os.path.dirname(__file__), "data", "demo.yaml")
 
-        self.har_parser.gen_yaml(yaml_file)
+        self.har_parser.gen_testcase(file_type="YAML")
+        self.assertTrue(os.path.isfile(yaml_file))
         os.remove(yaml_file)
 
-    def test_gen_json(self):
+    def test_gen_testcase_json(self):
         json_file = os.path.join(
             os.path.dirname(__file__), "data", "demo.json")
 
-        self.har_parser.gen_json(json_file)
+        self.har_parser.gen_testcase(file_type="JSON")
+        self.assertTrue(os.path.isfile(json_file))
         os.remove(json_file)
 
     def test_filter(self):
         filter_str = "httprunner"
         har_parser = HarParser(self.har_path, filter_str)
-        testcases = har_parser.make_testcases()
+        testcase = []
+        har_parser._prepare_teststeps(testcase)
         self.assertEqual(
-            testcases[0]["test"]["request"]["url"],
+            testcase[0]["test"]["request"]["url"],
             "https://httprunner.top/api/v1/Account/Login"
         )
 
         filter_str = "debugtalk"
         har_parser = HarParser(self.har_path, filter_str)
-        testcases = har_parser.make_testcases()
-        self.assertEqual(testcases, [])
+        testcase = []
+        har_parser._prepare_teststeps(testcase)
+        self.assertEqual(testcase, [])
 
     def test_exclude(self):
         exclude_str = "debugtalk"
         har_parser = HarParser(self.har_path, exclude_str=exclude_str)
-        testcases = har_parser.make_testcases()
+        testcase = []
+        har_parser._prepare_teststeps(testcase)
         self.assertEqual(
-            testcases[0]["test"]["request"]["url"],
+            testcase[0]["test"]["request"]["url"],
             "https://httprunner.top/api/v1/Account/Login"
         )
 
         exclude_str = "httprunner"
         har_parser = HarParser(self.har_path, exclude_str=exclude_str)
-        testcases = har_parser.make_testcases()
-        self.assertEqual(testcases, [])
+        testcase = []
+        har_parser._prepare_teststeps(testcase)
+        self.assertEqual(testcase, [])
 
     def test_exclude_multiple(self):
         exclude_str = "httprunner|v2"
         har_parser = HarParser(self.har_path, exclude_str=exclude_str)
-        testcases = har_parser.make_testcases()
-        self.assertEqual(testcases, [])
+        testcase = []
+        har_parser._prepare_teststeps(testcase)
+        self.assertEqual(testcase, [])
 
         exclude_str = "http2|v1"
         har_parser = HarParser(self.har_path, exclude_str=exclude_str)
-        testcases = har_parser.make_testcases()
-        self.assertEqual(testcases, [])
+        testcase = []
+        har_parser._prepare_teststeps(testcase)
+        self.assertEqual(testcase, [])
 
     def test_make_request_data_params(self):
         testcase_dict = {
@@ -191,13 +201,10 @@ class TestHar(TestUtils):
             {"eq": ["headers.Content-Type", "application/json; charset=utf-8"]}
         )
 
-    def test_make_testset(self):
+    def test_make_testcase(self):
         har_path = os.path.join(
             os.path.dirname(__file__), "data", "demo-quickstart.har")
         har_parser = HarParser(har_path)
-        testset = har_parser.make_testset()
-        testset_config = testset[0]
-        self.assertIn("config", testset_config)
-        self.assertIn("request", testset_config["config"])
-        self.assertIn("headers", testset_config["config"]["request"])
-        self.assertEqual(testset_config["config"]["request"]["base_url"], "")
+        testcase = har_parser._make_testcase()
+        testcase_config = testcase[0]
+        self.assertIn("config", testcase_config)
