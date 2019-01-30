@@ -12,7 +12,6 @@ try:
 except ImportError:
     JSONDecodeError = ValueError
 
-
 IGNORE_REQUEST_HEADERS = [
     "host",
     "accept",
@@ -183,7 +182,7 @@ class HarParser(object):
                 # post_data = utils.x_www_form_urlencoded(post_data)
                 pass
             else:
-                #TODO: make compatible with more mimeType
+                # TODO: make compatible with more mimeType
                 pass
 
             teststep_dict["request"][request_data_key] = post_data
@@ -252,16 +251,18 @@ class HarParser(object):
             else:
                 resp_content_json = json.loads(text)
 
-            if not isinstance(resp_content_json, dict):
-                return
-
-            for key, value in resp_content_json.items():
-                if isinstance(value, (dict, list)):
-                    continue
-
-                teststep_dict["validate"].append(
-                    {"eq": ["content.{}".format(key), value]}
-                )
+            if isinstance(resp_content_json, dict):
+                for key, value in resp_content_json.items():
+                    teststep_dict["validate"].append(
+                        {"eq": ["content.{}".format(key), value]}
+                    )
+            elif isinstance(resp_content_json, list):
+                for i in range(0, len(resp_content_json)):
+                    resp_content_json = resp_content_json[i]
+                    for key, value in resp_content_json.items():
+                        teststep_dict["validate"].append(
+                            {"eq": ["content.{}.{}".format(i, key), value]}
+                        )
 
     def _prepare_teststep(self, entry_json):
         """ extract info from entry dict and make teststep
@@ -318,6 +319,7 @@ class HarParser(object):
             teststeps list are parsed from HAR log entries list.
 
         """
+
         def is_exclude(url, exclude_str):
             exclude_str_list = exclude_str.split("|")
             for exclude_str in exclude_str_list:
