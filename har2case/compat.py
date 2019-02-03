@@ -39,7 +39,7 @@ if is_py2:
     ensure_ascii = True
     builtin_str = str
     bytes = str
-    str = unicode
+    str = (unicode, bytes)
     basestring = basestring
     numeric_types = (int, long, float)
     integer_types = (int, long)
