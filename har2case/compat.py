@@ -34,6 +34,7 @@ except ImportError:
 
 if is_py2:
     import urlparse
+    from urllib import unquote
 
     ensure_ascii = True
     builtin_str = str
@@ -45,6 +46,7 @@ if is_py2:
 
 elif is_py3:
     import urllib.parse as urlparse
+    from urllib.parse import unquote
 
     ensure_ascii = False
     builtin_str = str
