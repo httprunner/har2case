@@ -250,7 +250,7 @@ class HarParser(object):
                 resp_content_json = json.loads(content)
             except JSONDecodeError:
                 logging.warning(
-                    "response content can not be loaded as json: {}".format(content)
+                    "response content can not be loaded as json: {}".format(content.encode("utf-8"))
                 )
                 return
 
