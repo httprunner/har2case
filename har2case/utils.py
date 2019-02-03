@@ -4,7 +4,7 @@ import logging
 import sys
 
 import yaml
-from har2case.compat import bytes, ensure_ascii
+from har2case.compat import bytes, ensure_ascii, str
 
 
 def load_har_log_entries(file_path):
@@ -53,6 +53,31 @@ def x_www_form_urlencoded(post_data):
             u"{}={}".format(key, value)
             for key, value in post_data.items()
         ])
+    else:
+        return post_data
+
+
+def convert_x_www_form_urlencoded_to_dict(post_data):
+    """ convert x_www_form_urlencoded data to dict
+
+    Args:
+        post_data (str): a=1&b=2
+
+    Returns:
+        dict: {"a":1, "b":2}
+
+    """
+    if isinstance(post_data, str):
+        converted_dict = {}
+        for k_v in post_data.split("&"):
+            try:
+                key, value = k_v.split("=")
+            except ValueError:
+                raise Exception(
+                    "Invalid x_www_form_urlencoded data format: {}".format(post_data)
+                )
+            converted_dict[key] = value
+        return converted_dict
     else:
         return post_data
 
