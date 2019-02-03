@@ -56,3 +56,10 @@ class TestUtils(unittest.TestCase):
             utils.convert_list_to_dict(origin_list),
             {"v": "1", "w": "2"}
         )
+
+    def test_convert_x_www_form_urlencoded_to_dict(self):
+        origin_str = "a=1&b=2"
+        converted_dict = utils.convert_x_www_form_urlencoded_to_dict(origin_str)
+        self.assertIsInstance(converted_dict, dict)
+        self.assertEqual(converted_dict["a"], "1")
+        self.assertEqual(converted_dict["b"], "2")

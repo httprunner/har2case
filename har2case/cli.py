@@ -53,7 +53,7 @@ def main():
         logging.error("HAR file not specified.")
         sys.exit(1)
 
-    output_file_type = "YAML" if args.to_yaml else "JSON"
+    output_file_type = "YML" if args.to_yaml else "JSON"
     HarParser(
         har_source_file, args.filter, args.exclude
     ).gen_testcase(output_file_type)
