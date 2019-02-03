@@ -7,16 +7,10 @@ Convert HAR(HTTP Archive) to YAML/JSON testcases for HttpRunner.
 
 ## install
 
-`har2case` is available on `PyPI` and can be installed through pip or easy_install.
+`har2case` is available on `PyPI` and can be installed through pip.
 
 ```bash
 $ pip install har2case
-```
-
-or
-
-```bash
-$ easy_install har2case
 ```
 
 ## usage
@@ -28,7 +22,7 @@ To see `har2case` version:
 
 ```bash
 $ har2case -V
-0.2.0
+0.2.1
 ```
 
 To see available options, run:
@@ -86,7 +80,7 @@ The generated testcase file is in the same folder with the har source file and h
 You can do some filter while conversion, only url that includes filter string will be converted.
 
 ```bash
-$ har2case tests/data/demo.har --filter httprunner.top
+$ har2case tests/data/demo.har --filter httprunner.org
 ```
 
 **exclude**
@@ -117,7 +111,7 @@ Generated YAML testcase `demo.yml` shows like below:
                 UserName: test001
                 VerCode: ''
             method: POST
-            url: https://httprunner.top/api/v1/Account/Login
+            url: https://httprunner.org/api/v1/Account/Login
         validate:
         -   eq:
             - status_code
@@ -150,7 +144,7 @@ And generated JSON testcase `demo.json` shows like this:
         "test": {
             "name": "/api/v1/Account/Login",
             "request": {
-                "url": "https://httprunner.top/api/v1/Account/Login",
+                "url": "https://httprunner.org/api/v1/Account/Login",
                 "method": "POST",
                 "headers": {
                     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
