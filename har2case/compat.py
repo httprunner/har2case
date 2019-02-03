@@ -34,17 +34,19 @@ except ImportError:
 
 if is_py2:
     import urlparse
+    from urllib import unquote
 
     ensure_ascii = True
     builtin_str = str
     bytes = str
-    str = unicode
+    str = (unicode, bytes)
     basestring = basestring
     numeric_types = (int, long, float)
     integer_types = (int, long)
 
 elif is_py3:
     import urllib.parse as urlparse
+    from urllib.parse import unquote
 
     ensure_ascii = False
     builtin_str = str

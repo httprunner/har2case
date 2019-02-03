@@ -180,10 +180,9 @@ class HarParser(object):
                 except JSONDecodeError:
                     pass
             elif mimeType.startswith("application/x-www-form-urlencoded"):
-                # post_data = utils.x_www_form_urlencoded(post_data)
-                pass
+                post_data = utils.convert_x_www_form_urlencoded_to_dict(post_data)
             else:
-                #TODO: make compatible with more mimeType
+                # TODO: make compatible with more mimeType
                 pass
 
             teststep_dict["request"][request_data_key] = post_data
@@ -244,13 +243,16 @@ class HarParser(object):
             encoding = resp_content_dict.get("encoding")
             if encoding and encoding == "base64":
                 content = base64.b64decode(text).decode('utf-8')
-                try:
-                    resp_content_json = json.loads(content)
-                except JSONDecodeError:
-                    logging.warning("response content can not be loaded as json.")
-                    return
             else:
-                resp_content_json = json.loads(text)
+                content = text
+
+            try:
+                resp_content_json = json.loads(content)
+            except JSONDecodeError:
+                logging.warning(
+                    "response content can not be loaded as json: {}".format(content.encode("utf-8"))
+                )
+                return
 
             if not isinstance(resp_content_json, dict):
                 return
