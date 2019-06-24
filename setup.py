@@ -1,7 +1,9 @@
 import io
 import os
+import sys
+from shutil import rmtree
 
-from setuptools import find_packages, setup
+from setuptools import Command, find_packages, setup
 
 about = {}
 here = os.path.abspath(os.path.dirname(__file__))
@@ -11,7 +13,49 @@ with io.open(os.path.join(here, 'har2case', '__about__.py'), encoding='utf-8') a
 with io.open("README.md", encoding='utf-8') as f:
     long_description = f.read()
 
-install_requires = open("requirements.txt").readlines()
+install_requires = ["PyYAML"]
+
+class UploadCommand(Command):
+    """ Build and publish this package.
+        Support setup.py upload. Copied from requests_html.
+    """
+
+    user_options = []
+
+    @staticmethod
+    def status(s):
+        """Prints things in green color."""
+        print("\033[0;32m{0}\033[0m".format(s))
+
+    def initialize_options(self):
+        """ override
+        """
+        pass
+
+    def finalize_options(self):
+        """ override
+        """
+        pass
+
+    def run(self):
+        try:
+            self.status('Removing previous builds…')
+            rmtree(os.path.join(here, 'dist'))
+        except OSError:
+            pass
+
+        self.status('Building Source and Wheel (universal) distribution…')
+        os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
+
+        self.status('Uploading the package to PyPi via Twine…')
+        os.system('twine upload dist/*')
+
+        self.status('Publishing git tags…')
+        os.system('git tag v{0}'.format(about['__version__']))
+        os.system('git push --tags')
+
+        sys.exit()
+
 
 setup(
     name=about['__title__'],
@@ -44,5 +88,9 @@ setup(
         'console_scripts': [
             'har2case=har2case.cli:main'
         ]
+    },
+    # $ setup.py upload support.
+    cmdclass={
+        'upload': UploadCommand
     }
 )

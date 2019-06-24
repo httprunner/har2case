@@ -12,10 +12,10 @@ matrix:
       dist: xenial
       sudo: true
 install:
-  - pip install coverage
-  - pip install coveralls
-  - pip install -r requirements.txt
+  - pip install pipenv --upgrade
+  - pipenv install --dev --skip-lock
 script:
-  - coverage run --source=har2case -m unittest discover
+  - pipenv run python setup.py install
+  - pipenv run coverage run --source=har2case -m unittest discover
 after_success:
-  - coveralls
+  - pipenv run coveralls
