@@ -341,21 +341,25 @@ class HarParser(object):
                 {"test": self._prepare_teststep(entry_json)}
             )
 
-    def _make_testcase(self):
+    def _make_testcase(self, fmt_version):
         """ Extract info from HAR file and prepare for testcase
         """
         logging.debug("Extract info from HAR file and prepare for testcase.")
         testcase = []
         self._prepare_config(testcase)
-        self._prepare_teststeps(testcase)
+        if fmt_version == "v1":
+            self._prepare_teststeps(testcase)
+        else:
+            # v2
+            pass
         return testcase
 
-    def gen_testcase(self, file_type="JSON"):
+    def gen_testcase(self, file_type="JSON", fmt_version="v1"):
         harfile = os.path.splitext(self.har_file_path)[0]
         output_testcase_file = "{}.{}".format(harfile, file_type.lower())
 
         logging.info("Start to generate testcase.")
-        testcase = self._make_testcase()
+        testcase = self._make_testcase(fmt_version)
         logging.debug("prepared testcase: {}".format(testcase))
 
         if file_type == "JSON":

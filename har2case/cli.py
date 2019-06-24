@@ -34,6 +34,10 @@ def main():
         dest='to_yaml', action='store_true',
         help="Convert to YAML format, if not specified, convert to JSON format by default.")
     parser.add_argument(
+        '-fmt', '--format',
+        dest='fmt_version', default='v1',
+        help="Specify YAML/JSON testcase format version, v2 corresponds to HttpRunner 2.2.0+.")
+    parser.add_argument(
         '--filter', help="Specify filter keyword, only url include filter string will be converted.")
     parser.add_argument(
         '--exclude',
@@ -56,6 +60,6 @@ def main():
     output_file_type = "YML" if args.to_yaml else "JSON"
     HarParser(
         har_source_file, args.filter, args.exclude
-    ).gen_testcase(output_file_type)
+    ).gen_testcase(output_file_type, args.fmt_version.lower())
 
     return 0

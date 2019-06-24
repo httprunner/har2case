@@ -201,10 +201,10 @@ class TestHar(TestUtils):
             {"eq": ["headers.Content-Type", "application/json; charset=utf-8"]}
         )
 
-    def test_make_testcase(self):
+    def test_make_testcase_v1(self):
         har_path = os.path.join(
             os.path.dirname(__file__), "data", "demo-quickstart.har")
         har_parser = HarParser(har_path)
-        testcase = har_parser._make_testcase()
+        testcase = har_parser._make_testcase("v1")
         testcase_config = testcase[0]
         self.assertIn("config", testcase_config)
