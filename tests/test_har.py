@@ -35,11 +35,10 @@ class TestHar(TestUtils):
         )
 
     def test_prepare_teststeps(self):
-        testcase = []
-        self.har_parser._prepare_teststeps(testcase)
-        self.assertIn("name", testcase[0]["test"])
-        self.assertIn("request", testcase[0]["test"])
-        self.assertIn("validate", testcase[0]["test"])
+        teststeps = self.har_parser._prepare_teststeps("v1")
+        self.assertIn("name", teststeps[0]["test"])
+        self.assertIn("request", teststeps[0]["test"])
+        self.assertIn("validate", teststeps[0]["test"])
 
     def test_gen_testcase_yaml(self):
         yaml_file = os.path.join(
@@ -60,47 +59,41 @@ class TestHar(TestUtils):
     def test_filter(self):
         filter_str = "httprunner"
         har_parser = HarParser(self.har_path, filter_str)
-        testcase = []
-        har_parser._prepare_teststeps(testcase)
+        teststeps = har_parser._prepare_teststeps("v1")
         self.assertEqual(
-            testcase[0]["test"]["request"]["url"],
+            teststeps[0]["test"]["request"]["url"],
             "https://httprunner.top/api/v1/Account/Login"
         )
 
         filter_str = "debugtalk"
         har_parser = HarParser(self.har_path, filter_str)
-        testcase = []
-        har_parser._prepare_teststeps(testcase)
-        self.assertEqual(testcase, [])
+        teststeps = har_parser._prepare_teststeps("v1")
+        self.assertEqual(teststeps, [])
 
     def test_exclude(self):
         exclude_str = "debugtalk"
         har_parser = HarParser(self.har_path, exclude_str=exclude_str)
-        testcase = []
-        har_parser._prepare_teststeps(testcase)
+        teststeps = har_parser._prepare_teststeps("v1")
         self.assertEqual(
-            testcase[0]["test"]["request"]["url"],
+            teststeps[0]["test"]["request"]["url"],
             "https://httprunner.top/api/v1/Account/Login"
         )
 
         exclude_str = "httprunner"
         har_parser = HarParser(self.har_path, exclude_str=exclude_str)
-        testcase = []
-        har_parser._prepare_teststeps(testcase)
-        self.assertEqual(testcase, [])
+        teststeps = har_parser._prepare_teststeps("v1")
+        self.assertEqual(teststeps, [])
 
     def test_exclude_multiple(self):
         exclude_str = "httprunner|v2"
         har_parser = HarParser(self.har_path, exclude_str=exclude_str)
-        testcase = []
-        har_parser._prepare_teststeps(testcase)
-        self.assertEqual(testcase, [])
+        teststeps = har_parser._prepare_teststeps("v1")
+        self.assertEqual(teststeps, [])
 
         exclude_str = "http2|v1"
         har_parser = HarParser(self.har_path, exclude_str=exclude_str)
-        testcase = []
-        har_parser._prepare_teststeps(testcase)
-        self.assertEqual(testcase, [])
+        teststeps = har_parser._prepare_teststeps("v1")
+        self.assertEqual(teststeps, [])
 
     def test_make_request_data_params(self):
         testcase_dict = {
@@ -206,5 +199,18 @@ class TestHar(TestUtils):
             os.path.dirname(__file__), "data", "demo-quickstart.har")
         har_parser = HarParser(har_path)
         testcase = har_parser._make_testcase("v1")
-        testcase_config = testcase[0]
-        self.assertIn("config", testcase_config)
+        self.assertIsInstance(testcase, list)
+        self.assertEqual(len(testcase), 3)
+        self.assertIn("config", testcase[0])
+        self.assertIn("test", testcase[1])
+        self.assertIn("test", testcase[2])
+
+    def test_make_testcase_v2(self):
+        har_path = os.path.join(
+            os.path.dirname(__file__), "data", "demo-quickstart.har")
+        har_parser = HarParser(har_path)
+        testcase = har_parser._make_testcase("v2")
+        self.assertIsInstance(testcase, dict)
+        self.assertIn("config", testcase)
+        self.assertIn("teststeps", testcase)
+        self.assertEqual(len(testcase["teststeps"]), 2)

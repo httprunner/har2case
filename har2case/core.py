@@ -300,23 +300,17 @@ class HarParser(object):
 
         return teststep_dict
 
-    def _prepare_config(self, testcase):
-        """ prepare config block and add to testcase.
-
-        Args:
-            testcase (list)
+    def _prepare_config(self):
+        """ prepare config block.
 
         """
-        config_block = {
-            "config": {
-                "name": "testcase description",
-                "variables": {}
-            }
+        return {
+            "name": "testcase description",
+            "variables": {}
         }
-        testcase.append(config_block)
 
-    def _prepare_teststeps(self, testcase):
-        """ make teststep list and add to testcase.
+    def _prepare_teststeps(self, fmt_version):
+        """ make teststep list.
             teststeps list are parsed from HAR log entries list.
 
         """
@@ -328,6 +322,7 @@ class HarParser(object):
 
             return False
 
+        teststeps = []
         log_entries = utils.load_har_log_entries(self.har_file_path)
         for entry_json in log_entries:
             url = entry_json["request"].get("url")
@@ -337,21 +332,39 @@ class HarParser(object):
             if is_exclude(url, self.exclude_str):
                 continue
 
-            testcase.append(
-                {"test": self._prepare_teststep(entry_json)}
-            )
+            if fmt_version == "v1":
+                teststeps.append(
+                    {"test": self._prepare_teststep(entry_json)}
+                )
+            else:
+                # v2
+                teststeps.append(
+                    self._prepare_teststep(entry_json)
+                )
+
+        return teststeps
 
     def _make_testcase(self, fmt_version):
         """ Extract info from HAR file and prepare for testcase
         """
         logging.debug("Extract info from HAR file and prepare for testcase.")
-        testcase = []
-        self._prepare_config(testcase)
+
+        config = self._prepare_config()
+        teststeps = self._prepare_teststeps(fmt_version)
+
         if fmt_version == "v1":
-            self._prepare_teststeps(testcase)
+            testcase = []
+            testcase.append(
+                {"config": config}
+            )
+            testcase.extend(teststeps)
         else:
             # v2
-            pass
+            testcase = {
+                "config": config,
+                "teststeps": teststeps
+            }
+
         return testcase
 
     def gen_testcase(self, file_type="JSON", fmt_version="v1"):
