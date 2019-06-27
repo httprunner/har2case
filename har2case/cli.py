@@ -8,10 +8,10 @@ Usage:
     >>> har2case demo.har -2y
 
 """
-
 import argparse
 import logging
 import sys
+from distutils.version import StrictVersion
 
 from har2case.__about__ import __description__, __version__
 from har2case.core import HarParser
@@ -35,7 +35,7 @@ def main():
         help="Convert to YAML format, if not specified, convert to JSON format by default.")
     parser.add_argument(
         '-fmt', '--format',
-        dest='fmt_version', default='v1',
+        dest='fmt_version',
         help="Specify YAML/JSON testcase format version, v2 corresponds to HttpRunner 2.2.0+.")
     parser.add_argument(
         '--filter', help="Specify filter keyword, only url include filter string will be converted.")
@@ -58,8 +58,21 @@ def main():
         sys.exit(1)
 
     output_file_type = "YML" if args.to_yaml else "JSON"
+
+    try:
+        # set default format version by HttpRunner version
+        from httprunner.__about__ import __version__
+        if StrictVersion(__version__) < StrictVersion("2.2.0"):
+            default_fmt_version = "v1"
+        else:
+            default_fmt_version = "v2"
+    except ImportError:
+        default_fmt_version = "v2"
+
+    fmt_version = args.fmt_version or default_fmt_version
+
     HarParser(
         har_source_file, args.filter, args.exclude
-    ).gen_testcase(output_file_type, args.fmt_version.lower())
+    ).gen_testcase(output_file_type, fmt_version)
 
     return 0
